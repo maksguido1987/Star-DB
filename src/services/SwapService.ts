@@ -33,7 +33,7 @@ export default class SwapiService extends Component {
     return response.results.map(this.transformPerson);
   }
 
-  async getPerson(id: number): Promise<IPerson> {
+  async getPerson(id: string): Promise<IPerson> {
     const person = await this.getResourse(`${this.people}${id}`);
     return this.transformPerson(person);
   }
@@ -58,42 +58,42 @@ export default class SwapiService extends Component {
     return this.transformStarship(starship);
   }
 
-  extractId(item: IPlanet | IStarship | IPerson): number {
-    const idRegExp = /\/([0-9]*)\/$/;
-    return Number(item.url?.match(idRegExp));
-  }
-
-  transformPlanet(planet: IPlanet) {
+  transformPlanet = (planet: IPlanet) => {
     return {
       id: this.extractId(planet),
       name: planet.name,
       population: planet.population,
-      rotation_period: planet.rotation_period,
+      rotationPeriod: planet.rotation_period,
       diameter: planet.diameter,
     };
-  }
+  };
 
-  transformStarship(starship: IStarship) {
+  transformStarship = (starship: IStarship) => {
     return {
       id: this.extractId(starship),
       name: starship.name,
       model: starship.model,
       manufacturer: starship.manufacturer,
-      cost_in_credits: starship.cost_in_credits,
+      costInCredits: starship.cost_in_credits,
       length: starship.length,
       crew: starship.crew,
       passenger: starship.passenger,
-      cargo_capacity: starship.cargo_capacity,
+      cargoCapacity: starship.cargo_capacity,
     };
-  }
+  };
 
-  transformPerson(person: IPerson) {
+  transformPerson = (person: IPerson) => {
     return {
       id: this.extractId(person),
       name: person.name,
       gender: person.gender,
-      birth_year: person.birth_year,
-      eye_color: person.eye_color,
+      birthYear: person.birth_year,
+      eyeColor: person.eye_color,
     };
+  };
+
+  extractId(item: any): string {
+    const idRegExp = /\/([0-9]*)\/$/;
+    return item.url.match(idRegExp)[1];
   }
 }

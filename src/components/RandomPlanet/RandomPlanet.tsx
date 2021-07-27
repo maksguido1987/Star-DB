@@ -2,35 +2,67 @@
 import { Component } from 'react';
 import { IPlanet, IRandomPlanetState } from '../../interfaces';
 import SwapiService from '../../services/SwapService';
+import ErrorIndicator from '../Error/ErrorIndicator';
+import { Spinner } from '../Spinner/Spinner';
 import './random-planet.scss';
 
 export default class RandomPlanet extends Component<{}, IRandomPlanetState> {
   swapi = new SwapiService();
 
+  interval: NodeJS.Timer;
+
   constructor(props: IRandomPlanetState) {
     super(props);
     this.state = {
-      id: null,
-      name: null,
-      population: null,
-      rotationPeriod: null,
-      diameter: null,
+      planet: {
+        id: '2',
+        name: 'Eath',
+        population: '7.500000000',
+        rotationPeriod: '35',
+        diameter: '6500',
+      },
+      loading: true,
+      error: false,
     };
+  }
 
+  componentDidMount() {
     this.updatePlanet();
+    this.interval = setInterval(this.updatePlanet, 5000);
   }
 
-  onPlanetLoaded(planet: IPlanet) {
-    this.setState({ planet });
+  componentWillUnmount() {
+    clearInterval(this.interval);
   }
 
-  updatePlanet() {
-    const id = Math.floor(Math.random() * 25) + 1;
-    this.swapi.getPlanet(id).then(this.onPlanetLoaded);
-  }
+  onPlanetLoaded = (planet: IPlanet) => {
+    this.setState({ planet, loading: false });
+  };
+
+  onError = () => {
+    this.setState({ error: true, loading: false });
+  };
+
+  updatePlanet = () => {
+    const id = Math.floor(Math.random() * 15) + 2;
+    this.swapi.getPlanet(id).then(this.onPlanetLoaded).catch(this.onError);
+  };
 
   render() {
-    const { id, name, population, rotationPeriod, diameter } = this.state;
+    const {
+      planet: { id, name, population, rotationPeriod, diameter },
+      loading,
+      error,
+    } = this.state;
+
+    if (loading) {
+      return <Spinner />;
+    }
+
+    if (error && !loading) {
+      return <ErrorIndicator />;
+    }
+
     return (
       <div className="random-planet jumbotron rounded">
         <img

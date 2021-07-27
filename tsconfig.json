@@ -18,7 +18,8 @@
     "noEmit": true,
     "isolatedModules": true,
     "strict": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "strictNullChecks": false
   },
   "include": ["src/**/*"]
 }

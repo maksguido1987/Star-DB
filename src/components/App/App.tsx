@@ -1,26 +1,36 @@
+/* eslint-disable react/prefer-stateless-function */
 import '../../styles.scss';
 import './app.scss';
+import { Component } from 'react';
 import Header from '../Header/Header';
-import ItemList from '../ItemList/ItemList';
-import PersonDetails from '../PersonDetails/PersonDetails';
 import RandomPlanet from '../RandomPlanet/RandomPlanet';
+import ErrorButton from '../ErrorButton/ErrorButton';
+import { IAppState } from '../../interfaces';
+import ErrorIndicator from '../Error/ErrorIndicator';
+import PeoplePage from '../PeoplePage/PeoplePage';
 
-export const App = () => {
-  return (
-    <div className="wrapper">
-      <Header />
-      <RandomPlanet />
+export default class App extends Component<{}, IAppState> {
+  constructor(props: IAppState) {
+    super(props);
+    this.state = {
+      hasError: false,
+    };
+  }
 
-      <div className="row mb2">
-        <div className="col-md-6">
-          <ItemList />
-        </div>
-        <div className="col-md-6">
-          <PersonDetails />
-        </div>
+  componentDidCatch() {
+    this.setState({ hasError: true });
+  }
+
+  render() {
+    const { hasError } = this.state;
+    if (hasError) return <ErrorIndicator />;
+    return (
+      <div className="wrapper">
+        <Header />
+        <RandomPlanet />
+        <ErrorButton />
+        <PeoplePage />
       </div>
-    </div>
-  );
-};
-
-export default App;
+    );
+  }
+}
